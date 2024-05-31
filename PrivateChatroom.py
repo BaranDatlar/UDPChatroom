@@ -1,8 +1,12 @@
 import datetime
-from UserRegistration import Chat
+from UserRegistration import Chat, Users
 
 
 def create_chatroom(user1, user2):
+
+    if not Users.find_one({"username": user2}):
+        return "Error: User2 does not exist"
+    
     existing_chatroom = Chat.find_one({"users": {"$all": [user1, user2]}})
     if existing_chatroom:
         return existing_chatroom['_id']
