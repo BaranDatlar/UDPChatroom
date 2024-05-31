@@ -26,6 +26,22 @@ def start_private_chat(username, server_address):
         print(response["message"])
         return
 
+    # Gelen mesajları dinlemek için ayrı bir iş parçacığı başlat
+    import threading
+    def listen_for_messages():
+        while True:
+            data, _ = client_socket.recvfrom(1024)
+            response = json.loads(data.decode())
+            if response["status"] == "success" and "messages" in response:
+                messages = response["messages"]
+                for msg in messages:
+                    print(f"{msg['timestamp']} - {msg['sender']}: {msg['message']}")
+            elif "message" in response:
+                print(response["message"])
+
+    listener_thread = threading.Thread(target=listen_for_messages, daemon=True)
+    listener_thread.start()
+
     while True:
         message = input(f"{username}: ")
         if message == 'exit':
@@ -44,14 +60,6 @@ def start_private_chat(username, server_address):
             "chatroom_id": chatroom_id
         }
         client_socket.sendto(json.dumps(get_messages_request).encode(), server_address)
-        data, _ = client_socket.recvfrom(1024)
-        response = json.loads(data.decode())
-        if response["status"] == "success" and "messages" in response:
-            messages = response["messages"]
-            for msg in messages:
-                print(f"{msg['timestamp']} - {msg['sender']}: {msg['message']}")
-        else:
-            print("Error retrieving messages")
 
 
 if __name__ == "__main__":

@@ -46,8 +46,11 @@ def handle_message(data, address, clients):
             chat_message = message.get("message")
             send_message(chatroom_id, sender, chat_message)
             response = {"status": "success"}
-            server_socket.sendto(json.dumps(response).encode(), address)
-
+            
+            # Tüm istemcilere mesajı yayınla
+            for client in clients:
+                server_socket.sendto(json.dumps(response).encode(), client)
+                
         elif action == "get_messages":
             chatroom_id = ObjectId(message.get("chatroom_id"))
             messages = get_chatroom_messages(chatroom_id)
