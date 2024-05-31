@@ -3,7 +3,6 @@ from UserRegistration import Chat, Users
 
 
 def create_chatroom(user1, user2):
-
     if not Users.find_one({"username": user2}):
         return "Error: User2 does not exist"
     
@@ -32,3 +31,4 @@ def send_message(chatroom_id, sender, message):
 def get_chatroom_messages(chatroom_id):
     chatroom = Chat.find_one({"_id": chatroom_id})
     return chatroom['messages'] if chatroom else []
+
