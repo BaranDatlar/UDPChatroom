@@ -45,7 +45,12 @@ def handle_message(data, address, clients):
             sender = message.get("sender")
             chat_message = message.get("message")
             send_message(chatroom_id, sender, chat_message)
-            response = {"status": "success"}
+            response = {
+                "status": "success",
+                "message": chat_message,
+                "sender": sender,
+                "timestamp": datetime.datetime.now().isoformat()
+            }
             
             # Tüm istemcilere mesajı yayınla
             for client in clients:
@@ -61,6 +66,7 @@ def handle_message(data, address, clients):
         print(f"Error: {e}")
         response = {"status": "error", "message": str(e)}
         server_socket.sendto(json.dumps(response).encode(), address)
+
 
 
 if __name__ == "__main__":

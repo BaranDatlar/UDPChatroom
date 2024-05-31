@@ -37,8 +37,8 @@ def start_private_chat(username, server_address):
                     messages = response["messages"]
                     for msg in messages:
                         print(f"{msg['timestamp']} - {msg['sender']}: {msg['message']}")
-                elif "message" in response:
-                    print(response["message"])
+                elif "message" in response and "sender" in response:
+                    print(f"{response['timestamp']} - {response['sender']}: {response['message']}")
             except Exception as e:
                 print(f"Error receiving message: {e}")
 
@@ -63,6 +63,7 @@ def start_private_chat(username, server_address):
             "chatroom_id": chatroom_id
         }
         client_socket.sendto(json.dumps(get_messages_request).encode(), server_address)
+
 
 
 if __name__ == "__main__":
