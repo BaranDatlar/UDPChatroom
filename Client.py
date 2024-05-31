@@ -1,6 +1,7 @@
 from UserRegistration import authenticate_user
 import socket
 import json
+import threading
 
 def start_private_chat(username, server_address):
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -27,17 +28,19 @@ def start_private_chat(username, server_address):
         return
 
     # Gelen mesajları dinlemek için ayrı bir iş parçacığı başlat
-    import threading
     def listen_for_messages():
         while True:
-            data, _ = client_socket.recvfrom(1024)
-            response = json.loads(data.decode())
-            if response["status"] == "success" and "messages" in response:
-                messages = response["messages"]
-                for msg in messages:
-                    print(f"{msg['timestamp']} - {msg['sender']}: {msg['message']}")
-            elif "message" in response:
-                print(response["message"])
+            try:
+                data, _ = client_socket.recvfrom(1024)
+                response = json.loads(data.decode())
+                if response["status"] == "success" and "messages" in response:
+                    messages = response["messages"]
+                    for msg in messages:
+                        print(f"{msg['timestamp']} - {msg['sender']}: {msg['message']}")
+                elif "message" in response:
+                    print(response["message"])
+            except Exception as e:
+                print(f"Error receiving message: {e}")
 
     listener_thread = threading.Thread(target=listen_for_messages, daemon=True)
     listener_thread.start()
