@@ -1,23 +1,6 @@
 from UserRegistration import authenticate_user
-from PrivateChatroom import *
-import socket, json
-
-def start_client(username):
-    client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    server_address = ('192.168.1.106', 12345)  
-    print(f"{username} connected to the server at {server_address}")
-
-    initial_message = f"{username} has joined the chat".encode()
-    client_socket.sendto(initial_message, server_address)
-
-    while True:
-        message = input(f"{username}: ")
-        if message == 'exit':
-            break
-        message_to_send = f"{username}: {message}".encode()
-        client_socket.sendto(message_to_send, server_address)
-        data, _ = client_socket.recvfrom(1024)
-        print(data.decode())
+import socket
+import json
 
 def start_private_chat(username, server_address):
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -82,4 +65,3 @@ if __name__ == "__main__":
         start_private_chat(username, server_address)
     else:
         print(auth_status)
-

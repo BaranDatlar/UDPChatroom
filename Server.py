@@ -1,5 +1,7 @@
-import socket, json
+import socket
+import json
 from PrivateChatroom import *
+from bson.objectid import ObjectId
 
 def start_server():
     global server_socket
@@ -23,6 +25,8 @@ def handle_message(data, address, clients):
         message = json.loads(data)
         action = message.get("action")
 
+        print(f"Action: {action}")
+
         if action == "create_chatroom":
             user1 = message.get("user1")
             user2 = message.get("user2")
@@ -31,7 +35,7 @@ def handle_message(data, address, clients):
             server_socket.sendto(json.dumps(response).encode(), address)
 
         elif action == "send_message":
-            chatroom_id = message.get("chatroom_id")
+            chatroom_id = ObjectId(message.get("chatroom_id"))
             sender = message.get("sender")
             chat_message = message.get("message")
             send_message(chatroom_id, sender, chat_message)
@@ -39,7 +43,7 @@ def handle_message(data, address, clients):
             server_socket.sendto(json.dumps(response).encode(), address)
 
         elif action == "get_messages":
-            chatroom_id = message.get("chatroom_id")
+            chatroom_id = ObjectId(message.get("chatroom_id"))
             messages = get_chatroom_messages(chatroom_id)
             response = {"status": "success", "messages": messages}
             server_socket.sendto(json.dumps(response).encode(), address)

@@ -1,6 +1,6 @@
 import datetime
+from bson.objectid import ObjectId
 from UserRegistration import Chat, Users
-
 
 def create_chatroom(user1, user2):
     if not Users.find_one({"username": user2}):
@@ -24,11 +24,10 @@ def send_message(chatroom_id, sender, message):
         "timestamp": datetime.datetime.now()
     }
     Chat.update_one(
-        {"_id": chatroom_id},
+        {"_id": ObjectId(chatroom_id)},
         {"$push": {"messages": message_data}}
     )
 
 def get_chatroom_messages(chatroom_id):
-    chatroom = Chat.find_one({"_id": chatroom_id})
+    chatroom = Chat.find_one({"_id": ObjectId(chatroom_id)})
     return chatroom['messages'] if chatroom else []
-
