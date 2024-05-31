@@ -46,7 +46,7 @@ def start_private_chat(username, server_address):
         client_socket.sendto(json.dumps(get_messages_request).encode(), server_address)
         data, _ = client_socket.recvfrom(1024)
         response = json.loads(data.decode())
-        if response["status"] == "success":
+        if response["status"] == "success" and "messages" in response:
             messages = response["messages"]
             for msg in messages:
                 print(f"{msg['timestamp']} - {msg['sender']}: {msg['message']}")

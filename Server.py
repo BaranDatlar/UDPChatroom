@@ -1,7 +1,13 @@
 import socket
 import json
-from PrivateChatroom import *
 from bson.objectid import ObjectId
+from PrivateChatroom import *
+
+class DateTimeEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime.datetime):
+            return obj.isoformat()
+        return super(DateTimeEncoder, self).default(obj)
 
 def start_server():
     global server_socket
@@ -46,7 +52,7 @@ def handle_message(data, address, clients):
             chatroom_id = ObjectId(message.get("chatroom_id"))
             messages = get_chatroom_messages(chatroom_id)
             response = {"status": "success", "messages": messages}
-            server_socket.sendto(json.dumps(response).encode(), address)
+            server_socket.sendto(json.dumps(response, cls=DateTimeEncoder).encode(), address)
 
     except Exception as e:
         print(f"Error: {e}")

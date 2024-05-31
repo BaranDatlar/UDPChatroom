@@ -21,7 +21,7 @@ def send_message(chatroom_id, sender, message):
     message_data = {
         "sender": sender,
         "message": message,
-        "timestamp": datetime.datetime.now()
+        "timestamp": datetime.datetime.now().isoformat()
     }
     Chat.update_one(
         {"_id": ObjectId(chatroom_id)},
