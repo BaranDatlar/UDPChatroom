@@ -62,10 +62,25 @@ def handle_message(data, address, clients):
             response = {"status": "success", "messages": messages}
             server_socket.sendto(json.dumps(response, cls=DateTimeEncoder).encode(), address)
 
+        elif action == "send_global_message":  # Global chatroom için
+            sender = message.get("sender")
+            chat_message = message.get("message")
+            response = {
+                "status": "success",
+                "message": chat_message,
+                "sender": sender,
+                "timestamp": datetime.datetime.now().isoformat()
+            }
+
+            # Tüm istemcilere global mesajı yayınla
+            for client in clients:
+                server_socket.sendto(json.dumps(response).encode(), client)
+
     except Exception as e:
         print(f"Error: {e}")
         response = {"status": "error", "message": str(e)}
         server_socket.sendto(json.dumps(response).encode(), address)
+
 
 
 
