@@ -62,7 +62,13 @@ def handle_message(data, address, clients):
             response = {"status": "success", "messages": messages}
             server_socket.sendto(json.dumps(response, cls=DateTimeEncoder).encode(), address)
 
-        elif action == "send_global_message":  # Global chatroom için
+        elif action == "get_user_chatrooms":
+            username = message.get("username")
+            chatrooms = get_chatrooms(username)
+            response = {"status": "success", "chatrooms": chatrooms}
+            server_socket.sendto(json.dumps(response, cls=DateTimeEncoder).encode(), address)
+
+        elif action == "send_global_message":
             sender = message.get("sender")
             chat_message = message.get("message")
             response = {
@@ -80,6 +86,7 @@ def handle_message(data, address, clients):
         print(f"Error: {e}")
         response = {"status": "error", "message": str(e)}
         server_socket.sendto(json.dumps(response).encode(), address)
+
 
 
 

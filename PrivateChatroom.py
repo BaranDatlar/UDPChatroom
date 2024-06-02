@@ -31,3 +31,7 @@ def send_message(chatroom_id, sender, message):
 def get_chatroom_messages(chatroom_id):
     chatroom = Chat.find_one({"_id": ObjectId(chatroom_id)})
     return chatroom['messages'] if chatroom else []
+
+def get_chatrooms(username):
+    chatrooms = Chat.find({"users": username})
+    return [{"_id": str(chat["_id"]), "users": chat["users"]} for chat in chatrooms]
