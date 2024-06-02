@@ -5,6 +5,8 @@ from UserRegistration import register_user
 import socket
 import json
 import threading
+import datetime, pytz
+
 
 class ChatApp:
     def __init__(self, root):
@@ -120,7 +122,8 @@ class ChatApp:
                 data, _ = self.client_socket.recvfrom(1024)
                 response = json.loads(data.decode())
                 if "message" in response and "sender" in response:
-                    self.display_message(response['sender'], response['message'], response['timestamp'])
+                    timestamp = datetime.datetime.fromisoformat(response['timestamp']).astimezone(pytz.timezone('Europe/Istanbul')) 
+                    self.display_message(response['sender'], response['message'], timestamp)
             except Exception as e:
                 print(f"Error receiving message: {e}")
     
